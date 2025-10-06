@@ -12,6 +12,15 @@ const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 3000;
 
+function isInRange(itemValue, queryValue) {
+  if (queryValue.includes('-')) {
+    const [min, max] = queryValue.split('-').map(num => parseFloat(num.trim()));
+    const numValue = parseFloat(itemValue);
+    return numValue >= min && numValue <= max;
+  }
+  return String(itemValue) === String(queryValue);
+}
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
