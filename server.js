@@ -36,7 +36,7 @@ app.get('/mcds', (req, res) => {
 
     drivers = drivers.filter(item => {
       return Object.entries(filters).every(([key, value]) => {
-        return String(item[key]) === String(value);
+        return isInRange(item[key], value);
       });
     });
 
