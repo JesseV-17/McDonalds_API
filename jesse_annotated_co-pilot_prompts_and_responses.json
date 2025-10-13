@@ -1,0 +1,483 @@
+//I was having an issue with this dirname function that I got from the video we were provided with. I decided to ask Co-pilot for a way to fix it as I was lost on how I would fix this issue.
+
+JesseV-17: ReferenceError: __dirname is not defined
+    at file:///Users/jessevieira/Downloads/API/server.js:11:39
+    at Layer.handleRequest (/Users/jessevieira/Downloads/API/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/jessevieira/Downloads/API/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/Users/jessevieira/Downloads/API/node_modules/router/lib/route.js:117:3)
+    at handle (/Users/jessevieira/Downloads/API/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/Users/jessevieira/Downloads/API/node_modules/router/lib/layer.js:152:17)
+    at /Users/jessevieira/Downloads/API/node_modules/router/index.js:295:15
+    at processParams (/Users/jessevieira/Downloads/API/node_modules/router/index.js:582:12)
+    at next (/Users/jessevieira/Downloads/API/node_modules/router/index.js:291:5)
+    at Function.handle (/Users/jessevieira/Downloads/API/node_modules/router/index.js:186:3)
+
+
+GitHub Copilot: The error indicates that `__dirname` is not defined in your Node.js application. This typically happens when you're using ES modules (with `"type": "module"` in package.json) instead of CommonJS modules. In ES modules, `__dirname` is not available by default.
+
+Let me first examine your files to understand the current setup: 
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js)
+
+Read [](file:///Users/jessevieira/Downloads/API/package.json)
+
+I can see the issue! Your package.json has `"type": "module"` which means you're using ES modules, but you're trying to use `__dirname` which is only available in CommonJS modules. 
+
+In ES modules, you need to use `import.meta.url` to get the equivalent of `__dirname`. Here's how to fix it: 
+
+Using "Replace String in File"
+
+
+```
+
+```
+The fix I applied:
+
+1. **Imported required modules**: Added imports for `fileURLToPath` from the `url` module and `dirname` from the `path` module
+2. **Created `__dirname` equivalent**: Used `import.meta.url` to get the current module's URL, converted it to a file path with `fileURLToPath()`, then got the directory name with `dirname()`
+
+This provides the same functionality as the CommonJS `__dirname` variable in your ES module environment. Your server should now work properly without the ReferenceError.
+
+Made changes.
+
+//End of Prompt and response
+
+
+//I was following along with another video that we were provided as a resource and it included asking Co-pilot to create parameters in our API.
+
+JesseV-17: //lets listen for query peramaters called ITEM 
+
+GitHub Copilot: I'll help you add functionality to listen for query parameters called ITEM. Let me first check the current contents of your server.js file to see what's there: 
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js#1-1), lines 1 to 25
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js#24-24), lines 24 to 34
+
+I can see you already have some query parameter handling for `PRO`. Let me add functionality to also handle the `ITEM` query parameter. I'll modify the `/mcds` route to handle both parameters: 
+
+Using "Replace String in File"
+
+
+```
+
+```
+I've updated your `/mcds` route to:
+
+1. **Extract the ITEM query parameter**: Added `const ITEM = req.query.ITEM;` to capture the ITEM query parameter
+2. **Log both parameters**: Added console.log statements for both PRO and ITEM parameters
+3. **Renamed the imported data variable**: Changed `ITEM` to `itemData` to avoid confusion with the query parameter
+
+Now your server will listen for both `PRO` and `ITEM` query parameters. You can test it with URLs like:
+- `http://localhost:3000/mcds?PRO=somevalue&ITEM=someitem`
+- `http://localhost:3000/mcds?ITEM=specificitem`
+
+The values will be logged to the console when the endpoint is accessed.
+
+Made changes.
+
+//End of prompt and response
+
+
+//The video then wanted us to ask Co-pilot to have our code listen out for called parameters, which I asked it to do.
+
+JesseV-17: //lets listen for query peramaters called PRO
+const PRO = req.query.PRO;
+
+//grab ITEM from mcds.json that match the PRO query parameter
+//use syntax appropirate for ES modules
+
+GitHub Copilot: I'll help you implement functionality to listen for the PRO query parameter and grab matching ITEM data from mcds.json. Let me first check the current contents of your server.js file: 
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js#1-1), lines 1 to 30
+
+Let me also check the structure of mcds.json to understand how to filter by PRO: 
+
+Read [](file:///Users/jessevieira/Downloads/API/mcds.json#1-1), lines 1 to 20
+
+Perfect! I can see the structure. Now I'll update the server.js to filter items from mcds.json based on the PRO query parameter: 
+
+Using "Replace String in File"
+
+
+```
+
+```
+I've updated your `/mcds` route with the following improvements:
+
+1. **Added comments as requested**: Clear comments explaining the PRO query parameter handling
+2. **Fixed the import**: Changed from `ITEM.json` to mcds.json since that's where your data is
+3. **Added filtering logic**: Uses ES6 `filter()` method to find items where the PRO field matches the query parameter
+4. **Improved response handling**: 
+   - If a PRO parameter is provided, returns only matching items as JSON
+   - If no PRO parameter, returns all data
+   - Added error handling for failed imports
+5. **Better logging**: More descriptive console.log messages
+
+Now you can test it with URLs like:
+- `http://localhost:3000/mcds?PRO=40` - Returns items with PRO value of "40"
+- `http://localhost:3000/mcds` - Returns all items
+
+The response will be JSON data instead of serving the raw file, making it more useful for API consumption.
+
+Made changes.
+
+//End of prompt and response
+
+
+//When I was testing the API, I found that the TFAT parameter was not working as I wanted so I asked Co-pilot to scan the code for the problem and fix it.
+
+JesseV-17: why is TFAT not defined
+
+GitHub Copilot: Let me check the current contents of your server.js file to see what's happening with TFAT: 
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js#1-1), lines 1 to 50
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js#45-45), lines 45 to 71
+
+I found the issue! You're using `TFAT` in the conditional check on line 46, but you haven't declared it as a query parameter at the top of the function. You need to add `const TFAT = req.query.TFAT;` along with the other query parameter declarations.
+
+Looking at your code, I can see you're also missing declarations for `SFAT`, `FAT`, `CHOL`, and `SALT` that are used later in the conditionals. Let me fix this: 
+
+Using "Replace String in File"
+
+
+```
+
+```
+The issue was that you were using `TFAT`, `SFAT`, `FAT`, `CHOL`, and `SALT` in your conditional statements, but you hadn't declared them as query parameters at the top of the function. 
+
+Now all the query parameters are properly declared:
+- `TFAT` - Trans Fat
+- `SFAT` - Saturated Fat  
+- `FAT` - Total Fat
+- `CHOL` - Cholesterol
+- `SALT` - Sodium/Salt
+
+Your server should now work without the "TFAT is not defined" error. You can test it with URLs like:
+- `http://localhost:3000/mcds?TFAT=1.5`
+- `http://localhost:3000/mcds?SFAT=16`
+- `http://localhost:3000/mcds?FAT=41`
+
+Made changes.
+
+//End of prompt and response
+
+
+//After working on the API, I wanted to publish it to Vercel so Mikaela could start testing with it and itterating on the site.
+
+JesseV-17: how can i publish this api to vercel
+
+GitHub Copilot: To publish your API to Vercel, you'll need to make a few adjustments since Vercel uses serverless functions. Let me help you set this up:
+
+First, let me check if you have any build scripts in your package.json: 
+
+Read [](file:///Users/jessevieira/Downloads/API/package.json)
+
+Now I'll help you set up your project for Vercel deployment. Here are the steps:
+
+## 1. First, let's add a start script to your package.json: 
+
+Using "Replace String in File"
+
+
+```
+
+```
+## 2. Add express as a dependency in package.json: 
+
+Using "Replace String in File"
+
+
+```
+
+```
+## 3. Create a vercel.json configuration file: 
+
+Created [](file:///Users/jessevieira/Downloads/API/vercel.json)
+
+## 4. Now let's deploy to Vercel using the CLI: 
+
+Ran terminal command: npm install -g vercel
+
+Let's try installing Vercel CLI with npx instead (no global installation needed): 
+
+Ran terminal command: npx vercel --version
+
+Great! Now let's deploy your API to Vercel: 
+
+Ran terminal command: npx vercel
+
+Excellent! Your API has been deployed to Vercel. Here's what happened:
+
+## ✅ Your API is now live at:
+- **Preview URL**: https://mc-donalds-6u8annn2m-jesse-vieiras-projects.vercel.app
+- **Production URL**: https://mc-donalds-api.vercel.app (use `vercel --prod` to deploy to production)
+
+## To deploy to production: 
+
+Ran terminal command: npx vercel --prod
+
+Made changes.
+
+//End of prompt and response
+
+
+//Mikaela had responded to me telling me that she was getting a 404 error when using the link. I was trying to identify the issue but couldn't find anything in my code so I asked Co-pilot to figure out what the issue was.
+
+JesseV-17: why is this: Production URL: https://mc-donalds-api.vercel.app (use vercel --prod to deploy to production) a 404
+
+GitHub Copilot: The 404 error on your production URL is likely because you haven't deployed to production yet. Let me check your current setup and help you deploy properly.
+
+First, let me check your current server.js file to see if there are any issues: 
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js#1-1), lines 1 to 30
+
+Let me check your vercel.json file: 
+
+Read [](file:///Users/jessevieira/Downloads/API/vercel.json)
+
+The issue is likely that you need to deploy to production. Let me help you deploy properly: 
+
+Ran terminal command: vercel --prod
+
+Let me use npx to run vercel: 
+
+Ran terminal command: npx vercel --prod
+
+Great! Your API is now deployed to production. However, I notice a few potential issues:
+
+1. **The production URL has changed** - it's now: `https://mc-donalds-lcmucnmre-jesse-vieiras-projects.vercel.app`
+2. **The original URL might be from an older deployment**
+
+Let me check if there are any issues with your vercel configuration. The warning suggests there might be conflicting build settings. Let's also check if your API is working: 
+
+Ran terminal command: curl https://mc-donalds-lcmucnmre-jesse-vieiras-projects.vercel.app/
+
+Ran terminal command: curl "https://mc-donalds-lcmucnmre-jesse-vieiras-projects.vercel.app/mcds?PRO=40"
+
+Perfect! Your API is working correctly. The issue is:
+
+## ✅ Your API is now properly deployed and working at:
+**Current Production URL**: `https://mc-donalds-lcmucnmre-jesse-vieiras-projects.vercel.app`
+
+## Why the original URL shows 404:
+1. **Different deployment URLs** - Vercel generates new URLs for each deployment
+2. **The original URL** (`https://mc-donalds-api.vercel.app`) might have been from a preview deployment or an older version
+
+## To get a consistent URL:
+You can set up a custom domain or use Vercel's project settings to get a more consistent URL. Let me check your current Vercel deployments: 
+
+Ran terminal command: npx vercel ls
+
+Your API is successfully deployed! The current **production URL** that's working is:
+`https://mc-donalds-lcmucnmre-jesse-vieiras-projects.vercel.app`
+
+Test it with:
+- Root: `https://mc-donalds-lcmucnmre-jesse-vieiras-projects.vercel.app/`
+- With filters: `https://mc-donalds-lcmucnmre-jesse-vieiras-projects.vercel.app/mcds?PRO=40`
+
+The 404 on the original URL was because Vercel creates new deployment URLs each time, and that specific URL might not have been the current production deployment.
+
+//End of prompt and response
+
+
+//I asked Co-pilot how I would add range queries to the API as we wanted to include those on our dynamic site.
+
+JesseV-17: how can i make it so that the parameters can be fetched with a range?
+
+GitHub Copilot: To add range filtering to your API parameters, you can modify your server to accept range queries like `PRO=30-50` or `CAL=500-800`. Let me check your current server.js file and then implement range functionality: 
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js)
+
+Now I'll modify your server to support range queries. I'll add a function to handle range filtering and update your filter logic: 
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+Perfect! Now your API supports range queries. Here's how it works:
+
+## 🎯 Range Query Examples:
+
+**Single values (exact match):**
+- `https://your-api.vercel.app/mcds?PRO=40`
+- `https://your-api.vercel.app/mcds?CAL=500`
+
+**Range values:**
+- `https://your-api.vercel.app/mcds?PRO=30-50` (protein between 30-50g)
+- `https://your-api.vercel.app/mcds?CAL=400-600` (calories between 400-600)
+- `https://your-api.vercel.app/mcds?FAT=10-25` (fat between 10-25g)
+
+**Multiple filters with ranges:**
+- `https://your-api.vercel.app/mcds?PRO=30-50&CAL=400-600`
+- `https://your-api.vercel.app/mcds?PRO=40&CAL=500-800&FAT=20-40`
+
+## 🔧 How it works:
+
+1. **`isInRange()` function** checks if a query contains a dash (`-`)
+2. **If it's a range** (e.g., "30-50"), it splits the values and checks if the item's value falls between min and max
+3. **If it's not a range**, it does an exact string match like before
+4. **Works with any numeric field** in your data: PRO, CAL, FAT, SFAT, TFAT, CHOL, SALT, CARB, FBR, SGR
+
+Let's test it locally: 
+
+Ran terminal command: node server.js
+
+Checked background terminal output
+
+Great! Now let's test the range functionality: 
+
+Ran terminal command: curl "http://localhost:3000/mcds?PRO=30-50" | head -c 200
+
+Let me try the test in a new terminal: 
+
+Ran terminal command: curl "http://localhost:3000/mcds?PRO=30-50" | jq length
+
+The server stopped. Let me restart it and test: 
+
+Ran terminal command: node server.js &
+
+Ran terminal command: sleep 2 && curl "http://localhost:3000/mcds?PRO=35-45" | jq '. | length'
+
+Let me deploy the updated version to Vercel so you can test it: 
+
+Ran terminal command: npx vercel --prod
+
+Perfect! Your API with range support is now deployed. Let's test it: 
+
+Ran terminal command: curl "https://mc-donalds-i1rb7eru7-jesse-vieiras-projects.vercel.app/mcds?PRO=35-45" | jq '. | length'
+
+Excellent! Your range functionality is working perfectly! 
+
+## ✅ Your API now supports range queries:
+
+**New Production URL**: `https://mc-donalds-i1rb7eru7-jesse-vieiras-projects.vercel.app`
+
+**Example Range Queries:**
+- `?PRO=35-45` - Found 15 items with protein between 35-45g
+- `?CAL=400-600` - Items with 400-600 calories  
+- `?FAT=10-25&PRO=30-50` - Multiple range filters
+- `?PRO=40` - Still works for exact matches
+
+**Test URLs:**
+- Range: `https://mc-donalds-i1rb7eru7-jesse-vieiras-projects.vercel.app/mcds?PRO=35-45`
+- Multiple ranges: `https://mc-donalds-i1rb7eru7-jesse-vieiras-projects.vercel.app/mcds?PRO=30-50&CAL=500-800`
+- Exact + range: `https://mc-donalds-i1rb7eru7-jesse-vieiras-projects.vercel.app/mcds?CATEGORY=BURGERSANDWICH&PRO=30-50`
+
+The range feature works with any numeric field in your McDonald's data!
+
+Made changes.
+
+//End of prompt and response
+
+
+//Here I asked Co-pilot to display the code it changed and to explain what it does, as I wanted to do some exploration into how Co-pilot created this code.
+
+JesseV-17: show me the code you added in
+
+GitHub Copilot: Here's the code I added to enable range functionality in your API:
+
+## 1. **Range Detection Helper Function** (lines 15-25):
+
+```javascript
+// Helper function to check if a value falls within a range
+function isInRange(itemValue, queryValue) {
+  // Check if queryValue contains a range (e.g., "30-50")
+  if (queryValue.includes('-')) {
+    const [min, max] = queryValue.split('-').map(num => parseFloat(num.trim()));
+    const numValue = parseFloat(itemValue);
+    return numValue >= min && numValue <= max;
+  }
+  // If not a range, do exact match
+  return String(itemValue) === String(queryValue);
+}
+```
+
+**What this does:**
+- **Detects ranges**: Checks if the query value contains a dash (`-`)
+- **Parses range**: Splits "30-50" into min=30, max=50
+- **Converts to numbers**: Uses `parseFloat()` to handle numeric comparisons
+- **Range check**: Returns true if the item's value is between min and max
+- **Fallback**: If no dash found, does exact string matching like before
+
+## 2. **Updated Filter Logic** (line 39):
+
+**Before:**
+```javascript
+return String(item[key]) === String(value);
+```
+
+**After:**
+```javascript
+return isInRange(item[key], value);
+```
+
+**What changed:**
+- Replaced the exact string comparison with the `isInRange()` function
+- Now supports both exact matches AND range queries
+- Works with any parameter: `PRO`, `CAL`, `FAT`, `CARB`, etc.
+
+## 3. **Examples of what's now possible:**
+
+```
+// Range queries
+?PRO=30-50        // Protein between 30-50g
+?CAL=400-600      // Calories between 400-600
+?FAT=10-25        // Fat between 10-25g
+
+// Exact matches (still work)
+?PRO=40           // Exactly 40g protein
+?CATEGORY=BURGER  // Exact category match
+
+// Combined
+?PRO=30-50&CAL=400-600&CATEGORY=BURGERSANDWICH
+```
+
+The key innovation is that the same function handles both exact matches and ranges, making your API much more flexible for filtering McDonald's nutrition data!
+
+//End of prompt and response
+
+
+//I was a bit confused on where a step of the code was implemented into my API. So I asked Co-pilot if it could identify where it was. 
+
+JesseV-17: where did you impliment number 2
+
+GitHub Copilot: You're right to ask! Looking at your current code, I can see that change #2 (the updated filter logic) is on **line 39** in the `/mcds` route. Let me show you exactly where: 
+
+Read [](file:///Users/jessevieira/Downloads/API/server.js#35-35), lines 35 to 45
+
+There it is! **Line 41** is where I implemented change #2:
+
+```javascript
+return isInRange(item[key], value);
+```
+
+This line replaced what would have been:
+```javascript
+return String(item[key]) === String(value);
+```
+
+So the complete implementation of change #2 is in the filter function inside the `/mcds` route, specifically:
+
+**Lines 40-42:**
+```javascript
+drivers = drivers.filter(item => {
+  return Object.entries(filters).every(([key, value]) => {
+    return isInRange(item[key], value);  // ← This is change #2
+  });
+});
+```
+
+This is where every query parameter gets processed through the `isInRange()` function instead of doing simple string comparison, enabling both exact matches and range queries.
+
+//End of prompt and response
