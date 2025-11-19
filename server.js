@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+const client = new MongoClient(process.env.MONGO_URI);
 
 
 const __filename = fileURLToPath(import.meta.url);
