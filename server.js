@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-mongodb+srv://<USER>:<PASSWORD>@cluster0.mongodb.net
 
 
 const __filename = fileURLToPath(import.meta.url);
